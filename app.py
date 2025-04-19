@@ -14,35 +14,86 @@ st.set_page_config(
     layout="wide"
 )
 
-# カスタムCSSを追加
+# カスタムCSSを追加 (ダークモード対応)
 st.markdown("""
 <style>
+    /* 全体の基本スタイル - ダークモード対応 */
+    .main-content {
+        background-color: #121212;
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    /* 明るい背景で暗いテキスト (ライトモード) と 暗い背景で明るいテキスト (ダークモード) の両方に対応 */
+    @media (prefers-color-scheme: dark) {
+        .main-header {
+            color: #90caf9 !important;
+        }
+        .sub-header {
+            color: #64b5f6 !important;
+        }
+        .app-description {
+            color: #e0e0e0 !important;
+        }
+        .expert-card {
+            background-color: #263238 !important;
+            border-left: 5px solid #64b5f6 !important;
+            color: #ffffff !important;
+        }
+        .expert-info {
+            background-color: #1e3a47 !important;
+            color: #ffffff !important;
+        }
+        .info-box {
+            background-color: #1e3a47 !important;
+            color: #ffffff !important;
+        }
+        .response-container {
+            background-color: #263238 !important;
+            color: #ffffff !important;
+            border-left: 5px solid #81c784 !important;
+        }
+        footer {
+            color: #aaaaaa !important;
+        }
+    }
+    
+    /* 共通スタイル (ライト・ダークモード両方) */
     .main-header {
-        font-size: 2.5rem;
-        color: #1E88E5;
+        font-size: 2.2rem;
         text-align: center;
         margin-bottom: 1rem;
         font-weight: 700;
+        color: #1976d2;
     }
+    
     .sub-header {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         color: #0D47A1;
-        margin-top: 2rem;
+        margin-top: 1.5rem;
         margin-bottom: 1rem;
         font-weight: 600;
     }
+    
     .expert-card {
         background-color: #f0f8ff;
         border-radius: 10px;
-        padding: 20px;
+        padding: 15px;
         margin: 10px 0;
         border-left: 5px solid #1E88E5;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    .expert-selected {
-        background-color: #e3f2fd;
-        border-left: 5px solid #64B5F6;
+    
+    .expert-info {
+        background-color: #e8f5e9;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 5px solid #4CAF50;
     }
+    
     .response-container {
         background-color: #f5f5f5;
         border-radius: 10px;
@@ -51,33 +102,72 @@ st.markdown("""
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-left: 5px solid #4CAF50;
     }
+    
+    /* ボタンスタイル - ダークモード対応 */
     .stButton > button {
-        background-color: #1E88E5;
-        color: white;
-        font-weight: bold;
-        border-radius: 5px;
-        padding: 0.5rem 2rem;
-        margin-top: 1rem;
+        background-color: #1976d2 !important;
+        color: white !important;
+        font-weight: bold !important;
+        border-radius: 5px !important;
+        padding: 0.5rem 2rem !important;
+        margin-top: 1rem !important;
+        border: none !important;
     }
+    
     .stButton > button:hover {
-        background-color: #0D47A1;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #1565c0 !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
     }
-    .info-box {
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
+    
+    /* モバイル対応のためのレスポンシブデザイン */
+    @media (max-width: 768px) {
+        .main-header {
+            font-size: 1.8rem;
+        }
+        .sub-header {
+            font-size: 1.3rem;
+        }
+        .expert-card {
+            padding: 10px;
+        }
+        .response-container {
+            padding: 15px;
+        }
     }
-    .app-description {
-        margin-bottom: 2rem;
-        color: #555;
-        line-height: 1.6;
+    
+    /* テキストエリアのスタイル改善 */
+    .stTextArea > div > div > textarea {
+        border-radius: 5px !important;
+        border: 1px solid #555555 !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: inherit !important;
+        font-size: 1rem !important;
     }
+    
+    /* ラジオボタンのテキスト色を強調 */
+    .stRadio label {
+        color: inherit !important;
+        font-weight: 500 !important;
+    }
+    
+    /* 警告メッセージのスタイル */
+    .stAlert {
+        border-radius: 5px !important;
+    }
+    
+    /* ラジオボタンの選択状態をより明確に */
+    .stRadio > div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child {
+        background-color: #1976d2 !important;
+    }
+    
+    /* フッタースタイル */
     footer {
         text-align: center;
-        margin-top: 3rem;
+        margin-top: 2rem;
         color: #666;
         font-size: 0.8rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -85,21 +175,22 @@ st.markdown("""
 # タイトルと説明の設定
 st.markdown("<h1 class='main-header'>🧠 AI専門家アシスタント</h1>", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([1, 6, 1])
-with col2:
+# メインレイアウト
+main_container = st.container()
+with main_container:
     st.markdown("""
     <div class="app-description">
     さまざまな専門分野のAIアシスタントに質問できるプラットフォームへようこそ。
-    AI専門家に質問することで、専門知識に基づいた回答を得ることができます。
+    専門家の知見に基づいた回答を得ることができます。
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="info-box" style="background-color: #e3f2fd; padding: 15px; border-radius: 10px;">
+    <div class="info-box" style="padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #1976d2;">
     <b>💡 使用方法：</b><br>
-    1. 下記の専門家から話したい専門家を選択します<br>
-    2. 質問や相談したい内容を入力フォームに記入します<br>
-    3. 送信ボタンをクリックして回答を取得します
+    1. 下記から専門家を選択<br>
+    2. 質問内容を入力フォームに記入<br>
+    3. 送信ボタンをクリックして回答を取得
     </div>
     """, unsafe_allow_html=True)
 
@@ -175,73 +266,69 @@ def ask_llm(expert_key, user_input):
 
 # Streamlit UIの構築
 def main():
-    col1, col2, col3 = st.columns([1, 6, 1])
+    # 専門家選択のセクション
+    st.markdown("<h2 class='sub-header'>専門家を選択</h2>", unsafe_allow_html=True)
     
+    # 専門家選択のラジオボタン
+    expert_options = {f"{expert['icon']} {expert['name']}": key for key, expert in experts.items()}
+    selected_expert_option = st.radio(
+        "",
+        list(expert_options.keys()),
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+    
+    # 選択された専門家のキー (A, B, C, D) を取得
+    selected_expert_key = expert_options[selected_expert_option]
+    selected_expert = experts[selected_expert_key]
+    
+    # 専門家の説明を表示
+    st.markdown(f"""
+    <div class="expert-info">
+        <b>{selected_expert['icon']} {selected_expert['name']}</b><br>
+        <p style="margin-top: 5px; margin-bottom: 0;">{selected_expert['description']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 質問セクション
+    st.markdown("<h2 class='sub-header'>質問入力</h2>", unsafe_allow_html=True)
+    
+    # ユーザー入力フォーム
+    user_input = st.text_area(
+        "専門家に質問したい内容を入力してください",
+        height=120,
+        key="user_input",
+        placeholder=f"{selected_expert['name']}に相談したいことを入力してください..."
+    )
+    
+    # 送信ボタン - モバイル向けに配置調整
+    col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        # 専門家選択のセクション
-        st.markdown("<h2 class='sub-header'>専門家を選択</h2>", unsafe_allow_html=True)
-        
-        # 専門家選択のラジオボタン（通常の表示に戻す）
-        expert_options = {f"{key}: {expert['icon']} {expert['name']}": key for key, expert in experts.items()}
-        selected_expert_option = st.radio(
-            "",
-            list(expert_options.keys()),
-            horizontal=True,
-            label_visibility="collapsed"
-        )
-        
-        # 選択された専門家のキー (A, B, C, D) を取得
-        selected_expert_key = expert_options[selected_expert_option]
-        selected_expert = experts[selected_expert_key]
-        
-        # 専門家カードを表示
-        st.markdown(f"""
-        <div style="background-color: #e8f5e9; padding: 15px; border-radius: 10px; margin: 20px 0;">
-            <b>💬 現在の専門家:</b> {selected_expert['icon']} <b>{selected_expert['name']}</b><br>
-            <p style="margin-top: 10px; margin-bottom: 0;">{selected_expert['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # 質問セクション
-        st.markdown("<h2 class='sub-header'>質問入力</h2>", unsafe_allow_html=True)
-        
-        # ユーザー入力フォーム（明示的にtext_areaを使用）
-        user_input = st.text_area(
-            "専門家に質問したい内容を入力してください",
-            height=150,
-            key="user_input",
-            placeholder=f"{selected_expert['icon']} {selected_expert['name']}に質問したいことを入力..."
-        )
-        
-        # 送信ボタン
-        col1, col2, col3 = st.columns([4, 2, 4])
-        with col2:
-            send_button = st.button("送信", type="primary", use_container_width=True)
-        
-        # 回答表示セクション
-        if send_button:
-            if not user_input.strip():
-                st.warning("⚠️ 質問を入力してください")
-            else:
-                with st.spinner(f"{selected_expert['icon']} 回答を生成中..."):
-                    # LLMからの回答を取得
-                    response = ask_llm(selected_expert_key, user_input)
-                    
-                    # 回答を表示
-                    st.markdown("<h2 class='sub-header'>回答</h2>", unsafe_allow_html=True)
-                    st.markdown(f"""
-                    <div class="response-container">
-                        {response}
-                    </div>
-                    """, unsafe_allow_html=True)
-        
-        # フッター
-        st.markdown("""
-        <footer>
-            <hr>
-            <p>AI専門家アシスタント © 2025 | Powered by LangChain & OpenAI</p>
-        </footer>
-        """, unsafe_allow_html=True)
+        send_button = st.button("送信", type="primary", use_container_width=True)
+    
+    # 回答表示セクション
+    if send_button:
+        if not user_input.strip():
+            st.warning("⚠️ 質問を入力してください")
+        else:
+            with st.spinner(f"{selected_expert['icon']} 回答を生成中..."):
+                # LLMからの回答を取得
+                response = ask_llm(selected_expert_key, user_input)
+                
+                # 回答を表示
+                st.markdown("<h2 class='sub-header'>回答</h2>", unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="response-container">
+                    {response}
+                </div>
+                """, unsafe_allow_html=True)
+    
+    # フッター
+    st.markdown("""
+    <footer>
+        AI専門家アシスタント | Powered by LangChain & OpenAI
+    </footer>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
